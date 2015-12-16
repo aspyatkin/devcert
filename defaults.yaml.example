@@ -1,0 +1,5 @@
+devcert:
+  organization: Acme Ltd.
+  country: US
+  state_name: California
+  locality: San Francisco
