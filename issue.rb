@@ -80,20 +80,14 @@ module DevCert
           ['L', defaults[:locality]]
       ]
 
-      server_csr = OpenSSL::X509::Request.new
-      server_csr.version = 0
-      server_csr.subject = server_name
-      server_csr.public_key = server_key.public_key
-      server_csr.sign server_key, OpenSSL::Digest::SHA256.new
-
       server_cert = OpenSSL::X509::Certificate.new
       server_cert.serial = ::DevCert::Util::generate_serial
       server_cert.version = 2
       server_cert.not_before = Time.now
       server_cert.not_after = Time.now + 8640000
 
-      server_cert.subject = server_csr.subject
-      server_cert.public_key = server_csr.public_key
+      server_cert.subject = server_name
+      server_cert.public_key = server_key.public_key
       server_cert.issuer = ca_bundle[:certificate].subject
 
       extension_factory = OpenSSL::X509::ExtensionFactory.new

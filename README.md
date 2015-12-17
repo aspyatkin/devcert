@@ -59,6 +59,7 @@ Use this tool only for development-purpose certificates.
 2. Export full chain option
 3. Ability to specify certificates lifetime
 4. Ability to renew server certificates
+5. Ability to create CSR with SAN
 
 ## License
 MIT @ [Alexander Pyatkin](https://github.com/aspyatkin)
