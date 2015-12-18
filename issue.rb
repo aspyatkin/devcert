@@ -73,11 +73,11 @@ module DevCert
       server_key = OpenSSL::PKey::RSA.new 4096
 
       server_name = OpenSSL::X509::Name.new [
-          ['CN', common_name],
-          ['O', defaults[:organization]],
-          ['C', defaults[:country]],
-          ['ST', defaults[:state_name]],
-          ['L', defaults[:locality]]
+        ['CN', common_name],
+        ['O', defaults[:organization]],
+        ['C', defaults[:country]],
+        ['ST', defaults[:state_name]],
+        ['L', defaults[:locality]]
       ]
 
       server_cert = OpenSSL::X509::Certificate.new
