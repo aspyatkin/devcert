@@ -5,18 +5,19 @@ require 'securerandom'
 module DevCert
   module Util
     def self.get_defaults
-      path = ::File.absolute_path 'defaults.yaml', __dir__
-      if ::File.exists? path
-        data = ::YAML.load ::File.open path
-      else
-        data = {}
-      end
+      path = ::File.absolute_path 'defaults.yaml', ::Dir.pwd
+      data = \
+        if ::File.exist? path
+          ::YAML.load(::File.open(path)).fetch('devcert', {})
+        else
+          {}
+        end
 
       {
-        organization: data.fetch('devcert', {}).fetch('organization', 'Acme Ltd.'),
-        country: data.fetch('devcert', {}).fetch('country', 'US'),
-        state_name: data.fetch('devcert', {}).fetch('state_name', 'California'),
-        locality: data.fetch('devcert', {}).fetch('locality', 'San Francisco')
+        organization: data.fetch('organization', 'Acme Ltd.'),
+        country: data.fetch('country', 'US'),
+        state_name: data.fetch('state_name', 'California'),
+        locality: data.fetch('locality', 'San Francisco')
       }
     end
 
@@ -44,7 +45,7 @@ module DevCert
 
     def self.load_bundle(path)
       full_path = ::File.absolute_path path, __dir__
-      if ::File.exists? full_path
+      if ::File.exist? full_path
         data = ::YAML.load ::File.open full_path
         {
           common_name: data[:common_name],
@@ -59,8 +60,8 @@ module DevCert
     def self.generate_serial
       machine_bytes = ['foo'].pack('p').size
       machine_bits = machine_bytes * 8
-      machine_max_signed = 2 ** (machine_bits - 1) - 1
-      SecureRandom.random_number machine_max_signed
+      machine_max_signed = 2**(machine_bits - 1) - 1
+      ::SecureRandom.random_number machine_max_signed
     end
   end
 end

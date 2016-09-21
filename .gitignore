@@ -2,3 +2,5 @@
 *.crt
 *.pem
 defaults.yaml
+pkg/*.gem
+Gemfile.lock
