@@ -3,7 +3,7 @@ require 'devcert/util'
 module DevCert
   module Export
     def self.export(bundle_path, type, output_dir)
-      bundle = ::DevCert::Util.load_bundle bundle_path
+      bundle = ::DevCert::Util.load_bundle(bundle_path)
       case type
       when 'private_key'
         private_key_path = ::File.join(

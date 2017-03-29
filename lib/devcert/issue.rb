@@ -3,12 +3,23 @@ require 'devcert/util'
 
 module DevCert
   module Issue
-    def self.issue(ca_bundle_path, domains, output_dir, key_size, validity)
-      ca_bundle = ::DevCert::Util.load_bundle ca_bundle_path
+    def self.issue(ca_bundle_path, domains, output_dir, key_type, rsa_key_size,
+                   ec_key_size, validity)
+      ca_bundle = ::DevCert::Util.load_bundle(ca_bundle_path)
       defaults = ::DevCert::Util.get_defaults
       common_name = domains[0]
 
-      server_key = OpenSSL::PKey::RSA.new key_size
+      server_key = nil
+      public_key = nil
+      if key_type == 'rsa'
+        server_key, public_key = ::DevCert::Util.generate_rsa_key(rsa_key_size)
+      elsif key_type == 'ec'
+        server_key, public_key = ::DevCert::Util.generate_ec_key(
+          ec_key_size.to_i
+        )
+      else
+        raise 'Unsupported key type/size'
+      end
 
       server_name = OpenSSL::X509::Name.new [
         ['CN', common_name],
@@ -25,7 +36,7 @@ module DevCert
       server_cert.not_after = Time.now + 60 * 60 * 24 * validity
 
       server_cert.subject = server_name
-      server_cert.public_key = server_key.public_key
+      server_cert.public_key = public_key
       server_cert.issuer = ca_bundle[:certificate].subject
 
       extension_factory = OpenSSL::X509::ExtensionFactory.new
@@ -65,7 +76,7 @@ module DevCert
         )
       )
 
-      server_cert.sign ca_bundle[:private_key], OpenSSL::Digest::SHA256.new
+      server_cert.sign(ca_bundle[:private_key], OpenSSL::Digest::SHA256.new)
 
       bundle_path = ::File.join(
         output_dir,

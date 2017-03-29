@@ -3,10 +3,19 @@ require 'devcert/util'
 
 module DevCert
   module GenCA
-    def self.generate_ca(common_name, output_dir, key_size, validity)
+    def self.generate_ca(common_name, output_dir, key_type, rsa_key_size,
+                         ec_key_size, validity)
       defaults = ::DevCert::Util.get_defaults
 
-      ca_key = ::OpenSSL::PKey::RSA.new key_size
+      ca_key = nil
+      public_key = nil
+      if key_type == 'rsa'
+        ca_key, public_key = ::DevCert::Util.generate_rsa_key(rsa_key_size)
+      elsif key_type == 'ec'
+        ca_key, public_key = ::DevCert::Util.generate_ec_key(ec_key_size.to_i)
+      else
+        raise 'Unsupported key type/size'
+      end
 
       ca_name = ::OpenSSL::X509::Name.new(
         [
@@ -24,7 +33,7 @@ module DevCert
       ca_cert.not_before = ::Time.now
       ca_cert.not_after = ::Time.now + 60 * 60 * 24 * validity
 
-      ca_cert.public_key = ca_key.public_key
+      ca_cert.public_key = public_key
       ca_cert.subject = ca_name
       ca_cert.issuer = ca_name
 
@@ -65,7 +74,7 @@ module DevCert
         output_dir,
         "#{::DevCert::Util.normalize_name(common_name)}.devcert"
       )
-      ::DevCert::Util.save_bundle bundle_path, common_name, ca_key, ca_cert
+      ::DevCert::Util.save_bundle(bundle_path, common_name, ca_key, ca_cert)
       puts "devcert bundle: #{bundle_path}"
     end
   end

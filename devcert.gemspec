@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'devcert'
-  s.version = '1.0.0'
-  s.date = '2016-09-21'
+  s.version = '2.0.0'
+  s.date = '2017-03-29'
   s.summary = 'Create development SSL/TLS certificates without a hassle'
   s.description = 'Create development SSL/TLS certificates without a hassle'
   s.authors = ['Alexander Pyatkin']

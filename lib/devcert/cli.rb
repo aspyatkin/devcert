@@ -15,22 +15,36 @@ module DevCert
       desc: 'Output directory'
     )
     method_option(
-      :key_size,
+      :key_type,
+      enum: ['rsa', 'ec'],
+      default: 'rsa',
+      desc: 'Key type'
+    )
+    method_option(
+      :rsa_key_size,
       type: :numeric,
       default: 2048,
       desc: 'RSA key size in bits'
     )
     method_option(
+      :ec_key_size,
+      enum: ['256', '384'],
+      default: '256',
+      desc: 'EC key size in bits'
+    )
+    method_option(
       :validity,
       type: :numeric,
-      default: 90,
+      default: 180,
       desc: 'CA certificate validity in days'
     )
     def genca(ca_name)
       ::DevCert::GenCA.generate_ca(
         ca_name,
         options[:output],
-        options[:key_size],
+        options[:key_type],
+        options[:rsa_key_size],
+        options[:ec_key_size],
         options[:validity]
       )
     end
@@ -74,15 +88,27 @@ module DevCert
       desc: 'Domain list'
     )
     method_option(
-      :key_size,
+      :key_type,
+      enum: ['rsa', 'ec'],
+      default: 'rsa',
+      desc: 'Key type'
+    )
+    method_option(
+      :rsa_key_size,
       type: :numeric,
       default: 2048,
       desc: 'RSA key size in bits'
     )
     method_option(
+      :ec_key_size,
+      enum: ['256', '384'],
+      default: '256',
+      desc: 'EC key size in bits'
+    )
+    method_option(
       :validity,
       type: :numeric,
-      default: 90,
+      default: 180,
       desc: 'Certificate validity in days'
     )
     def issue(ca_bundle_path)
@@ -90,7 +116,9 @@ module DevCert
         ::File.absolute_path(ca_bundle_path, ::Dir.pwd),
         options[:domains],
         options[:output],
-        options[:key_size],
+        options[:key_type],
+        options[:rsa_key_size],
+        options[:ec_key_size],
         options[:validity]
       )
     end
